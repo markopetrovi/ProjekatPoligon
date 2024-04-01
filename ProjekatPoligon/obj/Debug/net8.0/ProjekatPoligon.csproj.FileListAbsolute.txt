@@ -1,0 +1,14 @@
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/bin/Debug/net8.0/ProjekatPoligon
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/bin/Debug/net8.0/ProjekatPoligon.deps.json
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/bin/Debug/net8.0/ProjekatPoligon.runtimeconfig.json
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/bin/Debug/net8.0/ProjekatPoligon.dll
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/bin/Debug/net8.0/ProjekatPoligon.pdb
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/obj/Debug/net8.0/ProjekatPoligon.GeneratedMSBuildEditorConfig.editorconfig
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/obj/Debug/net8.0/ProjekatPoligon.AssemblyInfoInputs.cache
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/obj/Debug/net8.0/ProjekatPoligon.AssemblyInfo.cs
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/obj/Debug/net8.0/ProjekatPoligon.csproj.CoreCompileInputs.cache
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/obj/Debug/net8.0/ProjekatPoligon.dll
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/obj/Debug/net8.0/refint/ProjekatPoligon.dll
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/obj/Debug/net8.0/ProjekatPoligon.pdb
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/obj/Debug/net8.0/ProjekatPoligon.genruntimeconfig.cache
+/home/marko/.var/app/com.visualstudio.code/Testiranje/ProjekatPoligon/ProjekatPoligon/obj/Debug/net8.0/ref/ProjekatPoligon.dll

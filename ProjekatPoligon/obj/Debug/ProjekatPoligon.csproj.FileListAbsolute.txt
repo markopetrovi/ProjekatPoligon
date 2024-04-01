@@ -1,7 +1,0 @@
-C:\Users\Marko Petrovic\Desktop\Domaci rad\Programiranje\ProjekatPoligon\ProjekatPoligon\bin\Debug\ProjekatPoligon.exe.config
-C:\Users\Marko Petrovic\Desktop\Domaci rad\Programiranje\ProjekatPoligon\ProjekatPoligon\bin\Debug\ProjekatPoligon.exe
-C:\Users\Marko Petrovic\Desktop\Domaci rad\Programiranje\ProjekatPoligon\ProjekatPoligon\bin\Debug\ProjekatPoligon.pdb
-C:\Users\Marko Petrovic\Desktop\Domaci rad\Programiranje\ProjekatPoligon\ProjekatPoligon\obj\Debug\ProjekatPoligon.csproj.AssemblyReference.cache
-C:\Users\Marko Petrovic\Desktop\Domaci rad\Programiranje\ProjekatPoligon\ProjekatPoligon\obj\Debug\ProjekatPoligon.csproj.CoreCompileInputs.cache
-C:\Users\Marko Petrovic\Desktop\Domaci rad\Programiranje\ProjekatPoligon\ProjekatPoligon\obj\Debug\ProjekatPoligon.exe
-C:\Users\Marko Petrovic\Desktop\Domaci rad\Programiranje\ProjekatPoligon\ProjekatPoligon\obj\Debug\ProjekatPoligon.pdb

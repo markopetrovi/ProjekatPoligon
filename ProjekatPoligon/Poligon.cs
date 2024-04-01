@@ -1,121 +1,180 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+﻿using System.Diagnostics.Contracts;
+using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 
-public class Poligon
+namespace Program
 {
-	List<Tacka> Temena;
+	public partial class Polygon
+	{
+		List<Point> vertices = [];
+        HashSet<Point> vset = [];
+		Dictionary<Point, int> repeatCount = [];
+		List<Vector> edges = [];
 
-	public Poligon(List<Tacka> Niz_temena) => Temena = Niz_temena;
-	public Poligon() => Temena = new List<Tacka>();
-	public Poligon(params Tacka[] Temena) => this.Temena = new List<Tacka>(Temena);
-	public void DodajTeme(Tacka A) => Temena.Add(A);
-	public double Povrsina()
-	{
-		if (!Prost())
-			return -1;
-		double glavna = 0, sporedna = 0;
-		for (int i = 0; i < Temena.Count - 1; i++) {
-			glavna += Temena[i].x * Temena[i + 1].y;
-			sporedna += Temena[i].y * Temena[i + 1].x;
+		private void ParseVArray(List<Point> vertices)
+		{
+			this.vertices = [];
+			vset = [];
+			repeatCount = [];
+			edges = [];
+			AddVertex(vertices, -1);
 		}
-		glavna += Temena[Temena.Count - 1].x * Temena[0].y;
-		sporedna += Temena[Temena.Count - 1].y * Temena[0].x;
-		return Math.Abs(glavna - sporedna) / 2;
-	}
-	public double Obim()
-	{
-		if (Temena.Count < 2) return 0;
-		Tacka prev = Temena[0];
-		double duzina = 0;
-		for (int i = 1; i < Temena.Count; i++) {
-			duzina += new Vektor(prev, Temena[i]).Duzina();
-			prev = Temena[i];
+		public Polygon(List<Point> vertices) => ParseVArray(vertices);
+		public Polygon() {}
+		public Polygon(params Point[] vertices) => ParseVArray([.. vertices]);
+		public bool SwapPoints(int i1, int i2)
+		{
+			try {
+                (vertices[i2], vertices[i1]) = (vertices[i1], vertices[i2]);
+				edges = [];
+                return true;
+			} catch(Exception) { return false; }
 		}
-		return duzina;
-	}
-	public void Stampaj()
-	{
-		for (int i = 0; i < Temena.Count; i++)
-			Console.WriteLine($"A{i}: ({Temena[i].x}, {Temena[i].y})");
-	}
-	public bool Konveksan()
-	{
-		if (!Prost())
-			return false;
-		List<Tacka> l = new List<Tacka>();
-		foreach (Tacka T in Temena) { l.Add(T); }
-		l.Add(l[0]);
-		int k = 0;
-		for (int i = 0; i < Temena.Count - 1; i++) {
-			Vektor A = new Vektor(l[i], l[i + 1]);
-			Vektor B = new Vektor(l[i + 1], l[i + 2]);
-			if (Vektor.Vektorski(A, B) * k < 0)
+		public bool AddVertexUnique(List<Point> A, int i)
+		{
+			List<Point> l = [];
+			foreach (Point p in A)
+				if (!vset.Contains(p))
+					l.Add(p);
+			return AddVertex(l, i);
+		}
+		public bool AddVertex(List<Point> A, int i)
+		{
+			if (i == -1)
+				i = vertices.Count;
+			try {
+				vertices.InsertRange(i, A);
+				foreach (Point p in A) {
+					if (!vset.Add(p))
+						repeatCount.Add(p, 1);
+				}
+				edges = [];
+				return true;
+			} catch(Exception) { return false; }
+        }
+		public bool RemoveVertex(Point A)
+		{
+			if (!vset.Contains(A))
 				return false;
-			if (k == 0)
-				k = Math.Sign(Vektor.Vektorski(A, B));
+			
+			if (repeatCount.TryGetValue(A, out int value)) {
+				repeatCount[A] = --value;
+				if (value == 0)
+					repeatCount.Remove(A);
+			}
+			else
+				vset.Remove(A);
+			for (int i = vertices.Count - 1; i >= 0; i--)
+				if (vertices[i] == A) {
+					vertices.RemoveAt(i);
+					break;
+				}
+			edges = [];
+			return true;
 		}
-		return true;
-	}
-	public bool Prost()
-	{
-		// Domaci 6 - proveri da li je prost (nema ponovljenih temena i stranice se ne seku)
-		if (Temena.Count < 2)
-			return false;
-		HashSet<Tacka> set = new HashSet<Tacka>();
-		foreach(Tacka tacka in Temena) {
-			if (set.Contains(tacka))
-				return false;
-			set.Add(tacka);
+		public double Surface()
+		{
+			if (!IsSimple())
+				return -1;
+			double primary = 0, secondary = 0;
+			for (int i = 0; i < vertices.Count - 1; i++) {
+				primary += vertices[i].x * vertices[i + 1].y;
+				secondary += vertices[i].y * vertices[i + 1].x;
+			}
+			primary += vertices[^1].x * vertices[0].y;
+			secondary += vertices[^1].y * vertices[0].x;
+			return Math.Abs(primary - secondary) / 2;
 		}
-		if (Temena.Count == 3)
-			return Vektor.Vektorski(new Vektor(Temena[0], Temena[1]), new Vektor(Temena[0], Temena[2])) != 0;
+		public double Circumference()
+		{
+			if (!FormEdges())
+				return 0;
+			double length = 0;
+			foreach (Vector v in edges)
+				length += v.Length();
 
-		Tacka prev = Temena[0];
-		for (int i = 1; i < Temena.Count; i++) {
-			Tacka previous = Temena[i+1];
-			Vektor osnova = new Vektor(prev, Temena[i]);
-			for (int p = i+2; p < Temena.Count; p++) {
-				if (osnova.SIS(previous, Temena[p]))
+			return length;
+		}
+		public bool IsConvex()
+		{
+			if (!IsSimple() || !FormEdges())
+				return false;
+			int k = 0;
+			for (int i = 0; i < edges.Count - 1; i++) {
+				if (Vector.VectorM(edges[i], edges[i+1]) * k < 0)
 					return false;
-				previous = Temena[p];
+				if (k == 0)
+					k = Math.Sign(Vector.VectorM(edges[i], edges[i+1]));
 			}
-			prev = Temena[i];
+			if (Vector.VectorM(edges[^1], edges[0]) * k < 0)
+				return false;
+			return true;
+		}
+		static private bool Intersect(Vector A, Vector B) => (!A.OSS(B.A, B.B) && !B.OSS(A.A, A.B));
+		private bool FormEdges()
+		{
+			if (edges.Count != 0)
+				return true;
+			if (vertices.Count < 2)
+				return false;
+			for (int i = 0; i < vertices.Count-1; i++)
+				edges.Add(new Vector(vertices[i], vertices[i+1]));
+			if (vertices.Count > 2)
+				edges.Add(new Vector(vertices[^1], vertices[0]));
+			return true;
+		}
+		public bool IsSimple()
+		{
+			// Domaci 6 - proveri da li je prost (nema ponovljenih Vertices i stranice se ne seku)
+			if (repeatCount.Count > 0 && vertices.Count > 0)
+				return false;
+
+			FormEdges();
+			for (int i = 0; i < edges.Count; i++) {
+				int k = 0;
+				for (int p = 0; p < edges.Count; p++)
+					if (Intersect(edges[i], edges[p]))
+						k++;
+				if (k != 3)
+					return false;
+			}
+			
+			return true;
+		}
+		public Polygon ConvexHull()
+		{
+			// Domaci 7 - formiraj konveksni omotac
+			Polygon p = new(), n = new();
+			if (!IsSimple())
+				return p;
+			if(!FormEdges())
+				return new Polygon(vertices);
+			int positive = 0, negative = 0;
+
+			for (int i = 0; i < edges.Count - 1; i++) {
+				if (Vector.VectorM(edges[i], edges[i+1]) < 0) {
+					negative++;
+					n.AddVertex([edges[i].B], -1);
+				}
+				else {
+					positive++;
+					p.AddVertex([edges[i].B], -1);
+				}
+			}
+			if (Vector.VectorM(edges[^1], edges[0]) < 0) {
+				negative++;
+				n.AddVertex([edges[^1].B], -1);
+			}
+			else {
+				positive++;
+				p.AddVertex([edges[^1].B], -1);
+			}
+			
+			if (positive > negative)
+				return p;
+			else
+				return n;
 		}
 		
-		return true;
-	}
-	public Poligon Omotac()
-	{
-		// Domaci 7 - formiraj konveksni omotac
-		return new Poligon();
-	}
-	public void Snimi()
-	{
-		try {
-			BinaryFormatter formatter = new BinaryFormatter();
-			Console.Write("Enter the file name: ");
-			using (FileStream stream = new FileStream(Console.ReadLine(), FileMode.Create)) {
-				formatter.Serialize(stream, Temena);
-			}
-		} catch (Exception ex) {
-			Console.Error.WriteLine("Unable to save the polygon.");
-			Console.Error.WriteLine($"Error: {ex.Message}");
-		}
-		
-	}
-	public void Ucitaj()
-	{
-		try {
-			BinaryFormatter formatter = new BinaryFormatter();
-			Console.Write("Enter the file name: ");
-			using (FileStream stream = new FileStream(Console.ReadLine(), FileMode.Open)) {
-				Temena = (List<Tacka>)formatter.Deserialize(stream);
-			}
-		} catch (Exception ex) {
-			Console.Error.WriteLine("Unable to load the polygon.");
-			Console.Error.WriteLine($"Error: {ex.Message}");
-		}
 	}
 }
